@@ -1,0 +1,30 @@
+<template>
+  <div class="board bg-gray-400 p-3 rounded-lg gap-2" :style="{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }">
+    <Tile
+      v-for="(value, index) in gridFlat"
+      :key="index"
+      :value="value"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import Tile from './Tile.vue'
+
+const props = defineProps<{
+  grid: [number[], number[], number[], number[]]
+}>()
+
+const gridFlat = computed(() => {
+  return props.grid.flat()
+})
+</script>
+
+<style scoped>
+.board {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+</style>
