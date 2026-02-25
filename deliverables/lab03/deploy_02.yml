@@ -1,0 +1,30 @@
+# Crear una tubería GitHub Actions que haga un echo "¡Hola mundo de tuberías!".
+name: Tubería Lab03
+
+on:
+    push:
+        branches:
+            - lab03
+    pull_request:
+        branches:
+            - main
+            - lab03
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Descargar repositorio
+              uses: actions/checkout@v3
+
+            - name: Configurar Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+
+            - name: Configurar pnpm
+              uses: pnpm/action-setup@v3
+              with:
+                  version: 8
+
+            - name: Ejecutar Script Lab 2
+              run: bash ./deliverables/lab02/lab2.sh

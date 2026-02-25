@@ -1,4 +1,4 @@
-name: Hello World
+name: Hola Mundo
 
 on:
   push:
@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Say Hello
-        run: echo "Hello pipelines' world !"
+      - name: Decir Hola
+        run: echo "¡Hola mundo de tuberías!"
       
-      - name: Display runner info
+      - name: Mostrar información del corredor
         run: |
-          echo "Running on: $(uname -a)"
-          echo "Workflow: ${{ github.workflow }}"
-          echo "Triggered by: ${{ github.event_name }}"
-          echo "Repository: ${{ github.repository }}"
+          echo "Ejecutándose en: $(uname -a)"
+          echo "Flujo de trabajo: ${{ github.workflow }}"
+          echo "Activado por: ${{ github.event_name }}"
+          echo "Repositorio: ${{ github.repository }}"

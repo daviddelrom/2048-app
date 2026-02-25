@@ -1,4 +1,4 @@
-name: Hello World
+name: Hola Mundo
 
 on:
   push:
@@ -10,17 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Descargar código
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
+      - name: Configurar pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Setup Node.js
+      - name: Configurar Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
 
-      - name: Run lab2 script
+      - name: Ejecutar script lab2
         run: ./deliverables/lab02/lab2.sh

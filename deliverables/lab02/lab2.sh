@@ -1,30 +1,30 @@
 ﻿#!/bin/bash
 
-## Partie Pour aller plus loin ##
-echo "Identification des dépendances obsolètes"
+## Parte Para ir más allá ##
+echo "Identificación de dependencias obsoletas"
 mkdir -p reports
 pnpm outdated --format json > reports/outdated-dependencies.json
 # pnpm up --latest
 
-echo "Identification des dépendances vulnérables"
+echo "Identificación de dependencias vulnerables"
 pnpm audit --json  > reports/vulnerable-dependencies.json   
 # pnpm audit --fix
-## Partie Pour aller plus loin ##
+## Parte Para ir más allá ##
 
-echo "Installation des dépendances du projet"
+echo "Instalación de las dependencias del proyecto"
 pnpm install
 
-echo "Type checking" 
+echo "Verificación de tipos" 
 pnpm nuxt typecheck
 
-echo "Build du projet"
+echo "Construcción del proyecto"
 pnpm nuxt build
 
-echo "Analyse statique"
+echo "Análisis estático"
 pnpm eslint .
 
-# echo "Lancement du package créé" 
+# echo "Lanzamiento del paquete creado" 
 # pnpm nuxt preview
 
-echo "Execution des tests"
+echo "Ejecución de las pruebas"
 pnpm vitest run

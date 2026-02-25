@@ -1,0 +1,27 @@
+# Crear una tubería GitHub Actions que haga un echo "¡Hola mundo de tuberías!".
+name: Tubería Lab03
+
+on:
+    push:
+        branches:
+            - lab03
+    pull_request:
+        branches:
+            - main
+            - lab03
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Descargar repositorio
+              uses: actions/checkout@v3
+
+            - name: Saludar al mundo
+              run: echo "¡Hola mundo de tuberías!"
+
+            - name: Mostrar Información del Corredor
+              run: |
+                  echo "Ejecutándose en $(uname -a)"
+                  echo "Nombre del flujo: ${{ github.workflow }}"
+                  echo "Nombre del evento: ${{ github.event_name }}"
+                  echo "Repositorio: ${{ github.repository }}"
