@@ -3,13 +3,32 @@ name: CI Pipeline
 on:
   push:
     branches: [ main ]
+    paths-ignore: [ 'docs/**' ]
   pull_request:
     branches: [ main ]
+    paths-ignore: [ 'docs/**' ]
+  workflow_dispatch:
+    inputs:
+      run_checks:
+        description: 'Execute static analysis and tests?'
+        required: false
+        default: 'true'
+        type: boolean
+      environment:
+        description: 'Deployment target environment'
+        required: false
+        default: 'QA'
+        type: choice
+        options:
+          - QA
+          - PROD
+
+env:
+  NODE_VERSION: '20'
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,14 +36,42 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Hello pipelines' world
-        run: echo "Hello pipelines' world !"
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifact
+          path: .output
+          retention-days: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' ? 7 : 1 }}
+
+  lint-and-type:
+    needs: build
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.run_checks == 'true')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Install dependencies
         run: pnpm install
@@ -35,15 +82,33 @@ jobs:
       - name: Lint code
         run: pnpm lint
 
+  tests:
+    needs: build
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.run_checks == 'true')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Run tests
         run: pnpm test
 
-      - name: Build project
-        run: pnpm build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-artifact
-          path: .output
-          retention-days: 5
+  deploy:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate deployment
+        run: echo "Deploying to ${{ github.event.inputs.environment }}"
