@@ -1,0 +1,17 @@
+{
+  "name": "vue2048-infra",
+  "private": true,
+  "devDependencies": {
+    "@pulumi/azure-native": "^1.91.0",
+    "@pulumi/pulumi": "^3.81.0",
+    "@types/node": "^20.14.0",
+    "typescript": "^5.6.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "preview": "pulumi preview",
+    "up": "pulumi up",
+    "destroy": "pulumi destroy",
+    "watch": "pulumi watch"
+  }
+}
