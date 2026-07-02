@@ -1,0 +1,18 @@
+{
+  "name": "infra-vue2048",
+  "private": true,
+  "scripts": {
+    "up": "pulumi up",
+    "preview": "pulumi preview",
+    "destroy": "pulumi destroy"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@pulumi/pulumi": "^4.0.0",
+    "@pulumi/azure-native": "^1.0.0"
+  }
+}

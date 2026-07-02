@@ -1,0 +1,91 @@
+name: CI-CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.upload.outputs.artifact-name }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: enable corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: run lint and tests
+        run: |
+          pnpm run lint --if-present
+          pnpm test --if-present
+
+      - name: build
+        run: pnpm build
+
+      - name: upload build artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-artifact
+          path: |
+            .output/public
+            dist
+            build
+
+  deploy-qa:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site-artifact
+
+      - name: deploy to QA (placeholder)
+        env:
+          AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_QA_TOKEN }}
+        run: |
+          echo "Deploy to QA with AZURE_STATIC_WEB_APPS_API_TOKEN"
+          # Example (uncomment and adjust) using official action:
+          # uses: Azure/static-web-apps-deploy@v1
+          # with:
+          #   azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_QA_TOKEN }}
+          #   app_location: "./"
+          #   output_location: ".output/public"
+
+  deploy-prod:
+    needs: deploy-qa
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site-artifact
+
+      - name: manual approval + deploy to production (placeholder)
+        env:
+          AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_PROD_TOKEN }}
+        run: |
+          echo "This job is attached to the protected 'production' environment in GitHub and requires approval before it runs."
+          echo "Deploy to production with AZURE_STATIC_WEB_APPS_PROD_TOKEN"
+          # Example (uncomment and adjust):
+          # uses: Azure/static-web-apps-deploy@v1
+          # with:
+          #   azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_PROD_TOKEN }}
+          #   app_location: "./"
+          #   output_location: ".output/public"
